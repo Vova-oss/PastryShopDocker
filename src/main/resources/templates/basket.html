@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+
+    <meta charset="UTF-8">
+    <title>Корзина</title>
+
+    <style> body {font-family: Arial, Helvetica, sans-serif;}
+
+    .modal {
+        position: fixed;
+        font-family: Arial, Helvetica, sans-serif;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(0,0,0,0.8);
+        z-index: 99999;
+        -webkit-transition: opacity 400ms ease-in;
+        -moz-transition: opacity 400ms ease-in;
+        transition: opacity 400ms ease-in;
+        display: none;
+        pointer-events: none;
+    }
+
+    /* Modal Content */
+    .modal-content {
+        display: block;
+        pointer-events: auto;
+        border: 2px solid #ea1737;
+    }
+    .modal > div {
+        width: 400px;
+        position: relative;
+        margin: 10% auto;
+        padding: 5px 20px 13px 20px;
+        border-radius: 10px;
+        background: #fff;
+        background: -moz-linear-gradient(#fff, #999);
+        background: -webkit-linear-gradient(#fff, #999);
+        background: -o-linear-gradient(#fff, #999);
+    }
+    /* The Close Button */
+    .close {
+        background: #606061;
+        color: #FFFFFF;
+        line-height: 25px;
+        position: absolute;
+        right: -12px;
+        text-align: center;
+        top: -10px;
+        width: 24px;
+        text-decoration: none;
+        font-weight: bold;
+        -webkit-border-radius: 12px;
+        -moz-border-radius: 12px;
+        border-radius: 12px;
+        -moz-box-shadow: 1px 1px 3px #000;
+        -webkit-box-shadow: 1px 1px 3px #000;
+        box-shadow: 1px 1px 3px #000;
+    }
+
+    .close:hover { background: #00d9ff; }
+    .close:hover, .close:focus {
+        color: #00d9ff;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    body{
+        margin: 0;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+    .topnav {
+        background-color: #333;
+        overflow: hidden;
+    }
+
+    /* Style the links inside the navigation bar */
+    .topnav a {
+        float: right;
+        color: #f2f2f2;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 17px;
+    }
+    a{
+        text-decoration: none;
+    }
+    a:hover{
+        background-color: rgba(24, 152, 220, 0.45);
+        color: black;
+    }
+    /* Change the color of links on hover */
+    .topnav a:hover {
+        background-color: #ddd;
+        color: black;
+    }
+
+    /* Add a color to the active/current link */
+    .topnav a.active {
+        background-color: #4CAF50;
+        color: white;
+    }
+    #Spreed {
+        border-collapse: collapse;
+        width: 80%;
+        border: 1px solid #ddd;
+        font-size: 18px;
+        margin: 5% auto;
+    }
+
+    #Spreed th, #Spreed td {
+        padding: 12px;
+        text-align:center;
+    }
+
+    #Spreed tr {
+        border-bottom: 1px solid #ddd;
+        text-align:center;
+    }
+    #Spreed tr.header {
+        background-color: rgba(241, 241, 241, 0.5);
+    }
+    .char{
+        border-radius: 10px;
+        font-size: 20px;
+    }
+    .char:hover{
+        background-color: rgba(113, 98, 98, 0.71);
+    }
+    </style>
+</head>
+<body th:style="'background-image: url(../other/basket.jpg);'">
+<div class="topnav">
+    <p style="font-family: tempus sans itc, fantasy; margin-left: 20%;float:left;text-align: center; font-size: 15px;
+            text-decoration: none; color: white; "><b><i>PastryShop</i></b> is perhaps the best choice for sweets</p>
+    <a href="/personalAccount">Назад</a>
+</div>
+
+<!--[[ ${#numbers.formatDecimal(55.466 == null ? 0 : 55.466, 0, 2)} ]]-->
+
+
+<table id="Spreed" th:if="${basketIsEmpty} == false">
+    <tr class="header">
+        <th>Картинка</th>
+        <th>Название</th>
+        <th>Цена</th>
+        <th>Количество</th>
+        <th>Общая стоимость</th>
+        <th colspan="2">Изменение количества</th>
+
+    </tr>
+
+    <form th:each="prod: ${products}" method="post" action="/actionInBasket">
+        <tr>
+            <th>
+                <img width="150px" height="100px" th:src="@{${prod.pathOfPicture}}" alt="" />
+            </th>
+            <th>[[${prod.nameOfProduct}]]</th>
+            <th>[[${prod.price}]]</th>
+            <th>[[${prod.amount}]]</th>
+            <th>[[ ${prod.price}*${prod.amount} ]]</th>
+            <th>
+                <form method="post" action="/actionInBasket">
+                    <input class="char" value="-" type="submit" >
+                    <input type="hidden" name="nameOfProduct" th:value="${prod.nameOfProduct}">
+                    <input  type="hidden" name="operation" value="-" >
+                </form>
+            </th>
+            <th>
+                <form method="post" action="/actionInBasket">
+                    <input class="char" value="+" type="submit" th:attr="disabled=${prod.available}>0 ? false : true">
+                    <input type="hidden" name="nameOfProduct" th:value="${prod.nameOfProduct}">
+                    <input type="hidden" name="operation" value="+" >
+                </form>
+            </th>
+        </tr>
+
+
+    </form>
+
+    <tr style="background-color: rgba(241,241,241,0.5);">
+        <th></th>
+        <th></th>
+        <th>ИТОГО: </th>
+        <th>[[ ${allPrice} ]]</th>
+        <th colspan="3">
+            <a href="/placeAnOrder">
+                <div style="background: rgba(5,250,17,0.5); border-radius: 20px; padding: 10px">Оформить заказ</div>
+            </a>
+        </th>
+
+
+    </tr>
+</table>
+
+<h2 style="text-align: center" th:if="${basketIsEmpty} == true"> Корзина пуста </h2>
+
+
+
+<!-- The Modal -->
+<div id="myModalError" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span id="span1" class="close">&times;</span>
+        <p>Некоторая выбранная Вами продукция больше недоступна.</p>
+
+    </div>
+</div>
+
+<div id="myModalGood" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span id="span2" class="close">&times;</span>
+        <p th:if="${basketIsEmpty} == false">Точно оформить?</p>
+        <a th:if="${basketIsEmpty} == false" href="/clarificationOfTheDesign"><button>Оформить</button></a>
+        <p th:if="${basketIsEmpty} == true">Корзина пуста</p>
+    </div>
+</div>
+
+<div id="myModalCompleted" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span id="span3" class="close">&times;</span>
+        <p>Продукция успешно заказана. Ожидайте её через 30 минут по адресу: [[${address}]]</p>
+
+    </div>
+</div>
+
+<script>
+
+    // 0 - Бездействие
+    // 1 - Сообщение об ошибке
+    // 2 - Уточнение оформления заказа
+
+   var bool = [[${result}]];
+   var modalError = document.getElementById("myModalError");
+   var modalGood = document.getElementById("myModalGood");
+   var modalCompleted = document.getElementById("myModalCompleted");
+
+   if(bool === 1){
+       modalError.style.display = "block";
+   }else if(bool === 2){
+       modalGood.style.display = "block";
+   }else if(bool === 3){
+       modalCompleted.style.display = "block";
+   }
+
+   var span1 = document.getElementById("span1");
+   var span2 = document.getElementById("span2");
+   var span3 = document.getElementById("span3");
+   span1.onclick = function() {   modalError.style.display = "none"; bool=0}
+   span2.onclick = function() {   modalGood.style.display = "none"; bool=0}
+   span3.onclick = function() {   modalCompleted.style.display = "none"; bool=0}
+
+
+   window.onclick = function(event) {
+       if (event.target == modalGood || event.target == modalError || event.target == modalCompleted) {
+           modalError.style.display = "none";
+           modalGood.style.display = "none";
+           modalCompleted.style.display = "none";
+           bool = 0;
+       } }
+</script>
+
+
+</body>
+</html>

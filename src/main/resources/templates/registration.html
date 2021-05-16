@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body{
+            margin:0;
+            padding: 0;
+            font-family: sans-serif;
+        }
+        .box{
+            width: 300px;
+            padding: 20px;
+            position: absolute;
+            top:50%;
+            left: 70%;
+            transform: translate(-50%,-50%);
+            background: rgba(25, 25, 25, 0.89);
+            text-align: center;
+            border-radius: 10px
+        }
+        .box h3{
+            color:white;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+        .box input[type="text"], .box input[type="password"]{
+            border: 0;
+            background: none;
+            display: block;
+            margin: 20px auto;
+            text-align: center;
+            border: 2px solid #3498db;
+            padding: 10px 5px;
+            width: 200px;
+            outline: none;
+            color: white;
+            border-radius: 20px;
+            transition: 0.25s;
+            font-size: 16px;
+        }
+        .box input[type="text"]:focus, .box input[type="password"]:focus{
+            width: 280px;
+            border-color: #2ecc71;
+        }
+        .box input[type="submit"]{
+            border: 0;
+            background: none;
+            display: block;
+            margin: 20px auto;
+            text-align: center;
+            border: 2px solid #2ecc71;
+            padding: 10px 15px;
+            outline: none;
+            color: white;
+            border-radius: 24px;
+            transition: 0.25s;
+            font-size: 16px;
+        }
+        .box input[type="submit"]:hover {
+            background: #2ecc71;
+        }
+        body{
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<body th:style="'background-image: url(../other/loginreg.jpg);'">
+<form action="/registrationAction" method="get" class="box">
+    <h3>Регистрация</h3>
+    <!--    <span style="color: red" th:text="${UserAlreadyExist}"></span>-->
+    <input type="text" name="surname" placeholder="Фамилия" th:value="${currentSurname}">
+    <span style="color:red" th:text="${surname}"></span>
+    <input type="text" name="name" placeholder="Имя" th:value="${currentName}">
+    <span style="color:red" th:text="${name}"></span>
+    <p style="color: red">Изменить email будет невозможно!<p>
+<!--    <input type="text" name="login" placeholder="Логин" th:value="${currentLogin}">-->
+<!--    <span style="color:red" th:text="${login}"></span>-->
+
+    <input type="text" name="email" placeholder="Email" th:value="${currentEmail}">
+    <span style="color:red" th:text="${email}"></span>
+
+    <input type="text" name="telephone_number" placeholder="Телефонный номер" th:value="${currentTelephoneNumber}">
+    <span style="color:red" th:text="${telephone_number}"></span>
+
+    <input type="text" name="address" placeholder="Адрес" th:value="${currentAddress}">
+    <span style="color:red" th:text="${address}"></span>
+
+    <input type="text" name="password" placeholder="Пароль" th:value="${currentPassword}">
+    <span style="color:red" th:text="${password}"></span>
+
+    <!--    <input type="password" name="password" placeholder="Пароль">-->
+    <!-- <input type="text" name="role" placeholder="ROLE_ADMIN or ROLE_USER?"> -->
+    <div><input type="submit" value="Зарегистрироваться"/></div>
+    <p ><b><a style="color: #e207fa" href = "/login">Вы уже зарегистрированы?</a></b></p>
+</form>
+</body>
+</html>

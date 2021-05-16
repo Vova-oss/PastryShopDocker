@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+        Фамилия
+        Имя
+        Логин
+        Email
+        Телефонный номер
+
+
+    <form th:each="user: ${users}">
+
+            [[${user.surname}]]
+            [[${user.name}]]
+            [[${user.login}]]
+            [[${user.email}]]
+            [[${user.telephone_number}]]
+
+                <table style="padding-left: 5%" th:each="basket: ${baskets}">
+                    <tr th:if="${user.id} == ${basket.user.id}">
+
+                        <th>[[${basket.nameOfProduct}]]</th>
+                        <th>[[${basket.amount}]]</th>
+                        <th>[[${basket.price}]] рублей</th>
+                        <th>[[ ${basket.price}*${basket.amount}]]</th>
+                        <th>
+                            <input value="Удалить" type="submit" name="operation">
+                        </th>
+                        <th>
+                            <input type="number" name="amount_of_product" min="1" placeholder="N-ое количество">
+                        </th>
+                        <th>
+                            <input value="Добавить" type="submit" name="operation">
+                            <input type="hidden" name="nameOfProduct" th:value="${basket.nameOfProduct}">
+                        </th>
+
+                        <th>
+                            <input value="В корзину" type="submit" name="operation">
+                        </th>
+
+                    </tr>
+                </table>
+
+    </form>
+
+<br>
+<br>
+<a href="/admin/pageForAdmin">Назад</a>
+</body>
+</html>

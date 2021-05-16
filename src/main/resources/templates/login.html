@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body{
+            margin:0;
+            padding: 0;
+            font-family: sans-serif;
+        }
+        .box{
+            width: 300px;
+            padding: 25px;
+            position: absolute;
+            top:50%;
+            left: 70%;
+            transform: translate(-50%,-50%);
+            background: rgba(25, 25, 25, 0.89);
+            text-align: center;
+            border-radius: 10px
+        }
+        .box h3{
+            color:white;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+        .box input[type="text"], .box input[type="password"]{
+            border: 0;
+            background: none;
+            display: block;
+            margin: 20px auto;
+            text-align: center;
+            border: 2px solid #3498db;
+            padding: 10px 5px;
+            width: 200px;
+            outline: none;
+            color: white;
+            border-radius: 20px;
+            transition: 0.25s;
+            font-size: 18px;
+        }
+        .box input[type="text"]:focus, .box input[type="password"]:focus{
+            width: 280px;
+            border-color: #2ecc71;
+        }
+        .box input[type="submit"]{
+            border: 0;
+            background: none;
+            display: block;
+            margin: 20px auto;
+            text-align: center;
+            border: 2px solid #2ecc71;
+            padding: 10px 15px;
+            outline: none;
+            color: white;
+            border-radius: 24px;
+            transition: 0.25s;
+            font-size: 18px;
+        }
+        .box input[type="submit"]:hover{
+            background: #2ecc71;
+        }
+        /* The Modal (background) */
+        .modal {
+            position: fixed;
+            font-family: Arial, Helvetica, sans-serif;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 99999;
+            -webkit-transition: opacity 400ms ease-in;
+            -moz-transition: opacity 400ms ease-in;
+            transition: opacity 400ms ease-in;
+            display: none;
+            pointer-events: none;
+        }
+
+        /* Modal Content */
+        .modal-content {
+            display: block;
+            pointer-events: auto;
+            border: 2px solid #ea1737;
+        }
+        .modal > div {
+            width: 400px;
+            position: relative;
+            margin: 10% auto;
+            padding: 5px 20px 13px 20px;
+            border-radius: 10px;
+            background: #fff;
+            background: -moz-linear-gradient(#fff, #999);
+            background: -webkit-linear-gradient(#fff, #999);
+            background: -o-linear-gradient(#fff, #999);
+        }
+        /* The Close Button */
+        .close {
+            background: #606061;
+            color: #FFFFFF;
+            line-height: 25px;
+            position: absolute;
+            right: -12px;
+            text-align: center;
+            top: -10px;
+            width: 24px;
+            text-decoration: none;
+            font-weight: bold;
+            -webkit-border-radius: 12px;
+            -moz-border-radius: 12px;
+            border-radius: 12px;
+            -moz-box-shadow: 1px 1px 3px #000;
+            -webkit-box-shadow: 1px 1px 3px #000;
+            box-shadow: 1px 1px 3px #000;
+        }
+
+        .close:hover { background: #00d9ff; }
+        .close:hover, .close:focus {
+            color: #00d9ff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        body{
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<body th:style="'background-image: url(../other/loginreg.jpg);'">
+<form th:action=@{/login} method="post" class="box">
+    <h3>Авторизация</h3>
+    <span style="color: white" th:text="${IncorrectData}"></span>
+    <br>
+    <input type="text" name="username" placeholder="Почта" th:value="${login}"/>
+    <input type="password" name="password" placeholder="Пароль" th:value="${password}"/>
+    <div><input type="submit" value="Авторизоваться" /></div>
+    <h4 style="color:grey">Ещё не зарегистрированы?</h4>
+    <h3 style="color:grey">↓</h3>
+    <a style="color: purple" href="/registration"><b>Регистрация</b></a>
+</form>
+
+
+
+<div id="activateCompleted" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span id="span1" class="close">&times;</span>
+        <p style="text-align: center">Почта успешно подтверждена. Пройдите форму авторизации.</p>
+
+    </div>
+</div>
+
+<div id="afterRegistration" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span id="span2" class="close">&times;</span>
+        <p style="text-align: center">Вам на почту было отправлено письмо. Проверьте её и для подтверждения перейдите по сслыке в письме.</p>
+
+    </div>
+</div>
+
+<div id="badLink" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span id="span3" class="close">&times;</span>
+        <p style="text-align: center">Данная ссылка больше не действительна.</p>
+
+    </div>
+</div>
+
+<script>
+
+    // 0 - Бездействие
+    // 1 - Сообщение об успешном подтверждении почты
+    // 2 - Сообщение о необходимости подтвердить почту (после регистрации)
+    // 3 - Ссылка больше не действительна
+
+    var boolL = [[${activateCompleted}]];
+    var modalCompletedL = document.getElementById("activateCompleted");
+    var modelAfterR = document.getElementById("afterRegistration");
+    var modelBadLink = document.getElementById("badLink");
+
+    if(boolL === 1){
+        modalCompletedL.style.display = "block";
+    }else if (boolL === 2){
+        modelAfterR.style.display = "block";
+    }else if (boolL === 3){
+        modelBadLink.style.display = "block";
+    }
+
+    var span1L = document.getElementById("span1");
+    var span2L = document.getElementById("span2");
+    var span3L = document.getElementById("span3");
+
+    span1L.onclick = function() {   modalCompletedL.style.display = "none"; boolL=0}
+    span2L.onclick = function() {   modelAfterR.style.display = "none"; boolL=0}
+    span3L.onclick = function() {   modelBadLink.style.display = "none"; boolL=0}
+
+    window.onclick = function(event) {
+        if (event.target == modalCompletedL || event.target == modelAfterR || event.target == modelBadLink) {
+            modalCompletedL.style.display = "none";
+            modelAfterR.style.display = "none";
+            modelBadLink.style.display = "none";
+            boolL = 0;
+        } }
+</script>
+
+</body>
+</html>
