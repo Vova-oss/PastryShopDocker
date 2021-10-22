@@ -128,8 +128,11 @@ public class StartController {
             }
             return "/registration";
         }
+        user.setActivationCode(null);
         userService.saveOneUser(user);
-        emailService.mailSenderAfterRegistration(user.getActivationCode(),user.getEmail(),user.getName());
+
+        // Не работает рассылка, поэтому я добавил 131 строку --------------------------------------------------------------!!!!!!!!!!!!!!!!
+//        emailService.mailSenderAfterRegistration(user.getActivationCode(),user.getEmail(),user.getName());
 
         return "redirect:/login?afterR";
     }

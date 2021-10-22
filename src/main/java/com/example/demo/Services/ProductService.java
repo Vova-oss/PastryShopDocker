@@ -124,4 +124,8 @@ public class ProductService {
         basketService.changePriceOfProduct(nameOfProduct, newPrice);
 
     }
+
+    public Product save(Product product) {
+        return productRepository.save(product);
+    }
 }

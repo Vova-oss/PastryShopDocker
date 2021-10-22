@@ -45,7 +45,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/activate/*").permitAll()
                 .antMatchers("/other/*").permitAll()
                 .antMatchers("/images/*").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers("/RU/**").permitAll()
+                .antMatchers("/RP/**").permitAll()
+                .anyRequest().permitAll()
                 .and()
                 .addFilterBefore(
                         new CustomFilter("/login",authenticationManager(), userService),

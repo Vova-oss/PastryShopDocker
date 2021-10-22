@@ -40,10 +40,10 @@ public class UserService {
     }
 
     @Transactional
-    public void saveOneUser(User user){
+    public User saveOneUser(User user){
         user.setActivationCode(UUID.randomUUID().toString());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     public User findUserByActivationCode(String code){
@@ -82,5 +82,13 @@ public class UserService {
         user.setActivationCode(null);
         userRepository.save(user);
         return true;
+    }
+
+    public User findUserById(String id) {
+        return userRepository.findById(Long.valueOf(id)).orElse(null);
+    }
+
+    public void delete(User user) {
+        userRepository.delete(user);
     }
 }
