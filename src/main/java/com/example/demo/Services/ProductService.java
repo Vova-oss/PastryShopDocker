@@ -128,4 +128,8 @@ public class ProductService {
     public Product save(Product product) {
         return productRepository.save(product);
     }
+
+    public void deleteProduct(Product product) {
+        productRepository.delete(product);
+    }
 }

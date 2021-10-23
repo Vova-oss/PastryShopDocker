@@ -147,7 +147,7 @@ public class RProductController {
             StaticMethods.createResponse(request, response, 400, "product with this id doesn't exist");
             return;
         }
-        productService.deleteOneAmountOfProduct(product);
+        productService.deleteProduct(product);
         StaticMethods.createResponse(request, response, 204, "product have deleted");
     }
 
