@@ -17,6 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PreDestroy;
 import javax.persistence.EntityManager;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -41,31 +44,35 @@ public class AdminController {
     EmailService emailService;
 
     @GetMapping("/pageForAdmin")
-    public String pageForAdmin(Model model){
+    public String pageForAdmin(Model model, HttpServletRequest request){
 
-//        List<Basket> baskets = basketService.findAllSorted();
-//        List<Product> products = productService.findAllSorted();
-//        for(Basket basket:baskets){
-//            for (Product product:products){
-//                if(basket.getNameOfProduct().equals(product.getTypeProduct()))
-//                    product.setAmount(product.getAmount()+basket.getAmount());
-//            }
-//        }
+        Cookie[] cookies = request.getCookies();
+        if(cookies!=null)
+            for (Cookie c: cookies){
+                if(c.getName().equals("background")) {
+                    model.addAttribute("background", c.getValue());
+                }
+            }
 
-//        if(SomethingWrong.equals("NameExists"))
-//            model.addAttribute("NameExists","Товар с таким названием уже существует");
-//        if(SomethingWrong.equals("PictureIsNull"))
-//            model.addAttribute("PictureIsNull","Картинка не должна быть пуста");
+//        model.addAttribute("background", true);
         model.addAttribute("Products",productService.findAllSorted());
-//        model.addAttribute("allProducts",products);
 
 
 
-//        model.addAttribute("fileName","/images/ffff.jpg");
+        return "pageForAdmin";
+    }
 
+    @PostMapping("/setBackground")
+    public String setBackground(@RequestParam(name = "background") String background,
+                                HttpServletResponse response,
+                                Model model){
 
+        Cookie cookie = new Cookie("background", background);
+        cookie.setMaxAge(60*60*24*365);
+        response.addCookie(cookie);
 
-//        model.addAttribute("productsInBasket",basketService.findAllSorted());
+        model.addAttribute("background", background);
+        model.addAttribute("Products",productService.findAllSorted());
         return "pageForAdmin";
     }
 
@@ -74,7 +81,7 @@ public class AdminController {
                              @RequestParam(name="priceOfNewProduct")String priceOfNewProduct,
                              @RequestParam(name="amountOfNewProduct")String amountOfNewProduct,
                              @RequestParam(name = "pictureOfProduct") MultipartFile file,
-                             Model model){
+                             Model model, HttpServletRequest request){
 
         if(productService.findByTypeProduct(nameOfNewProduct)!=null ||
                 file.getOriginalFilename().equals("") ||
@@ -88,7 +95,7 @@ public class AdminController {
                 model.addAttribute("PriceIsNull","Введите цену");
             if(amountOfNewProduct.equals(""))
                 model.addAttribute("AmountIsNull","Введите количество товара");
-            return pageForAdmin(model);
+            return pageForAdmin(model, request);
         }
 
 
@@ -119,7 +126,7 @@ public class AdminController {
                         @RequestParam(name="operation") String operation,
                         @RequestParam(name="amount_of_product",required = false) String amount,
                         @RequestParam(name="new_price", required = false) String newPrice,
-                        Model model){
+                        Model model, HttpServletRequest request, HttpServletResponse response){
 
 
         if(operation.equals("Добавить")) {
@@ -127,7 +134,7 @@ public class AdminController {
                 model.addAttribute("nullAmount","Мин. количество = 1");
                 model.addAttribute("nullPrice","Новая цена");
                 model.addAttribute("nameOfProduct", nameOfProduct);
-                return pageForAdmin(model);
+                return pageForAdmin(model, request);
             }
             productService.addSomeAmountOfProductByName(nameOfProduct, amount);
         }
@@ -136,7 +143,7 @@ public class AdminController {
                 model.addAttribute("nullAmount","Мин. количество = 1");
                 model.addAttribute("nullPrice","Новая цена");
                 model.addAttribute("nameOfProduct", nameOfProduct);
-                return pageForAdmin(model);
+                return pageForAdmin(model, request);
             }
             productService.deleteSomeAmountOfProductByName(nameOfProduct, amount);
         }
@@ -150,7 +157,7 @@ public class AdminController {
                 model.addAttribute("nullPrice","Мин. цена = 1");
                 model.addAttribute("nullAmount","N-ое количество");
                 model.addAttribute("nameOfProduct", nameOfProduct);
-                return pageForAdmin(model);
+                return pageForAdmin(model, request);
             }
             productService.changePriceOfProduct(nameOfProduct, newPrice);
         }

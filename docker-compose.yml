@@ -12,6 +12,7 @@ services:
       - UPLOAD_PATH_WITHOUT_IMAGES=.
     depends_on:
       - postgresqldb
+
   postgresqldb:
     image: postgres
     ports:
@@ -23,8 +24,6 @@ services:
 
   redis:
     image: redis
-#    volumes:
-#      - ./redis.conf:/usr/local/etc/redis/redis.conf
     ports:
       - "6379:6379"
 

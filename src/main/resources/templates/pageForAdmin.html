@@ -77,27 +77,8 @@
             opacity: 0.8;
         }
     </style>
-    <script type="text/javascript">
+<!--куда скрипт дели... Блин возможно скрипт не получает данных, так как он загружается раньше, ключевых слов нет-->
 
-        function myFunction() {
-            input = document.getElementById("FIND");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("search");
-            tr = table.getElementsByTagName("tr");
-
-            for (i = 1; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("th")[1];
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
-        }
-    </script>
 </head>
 <body th:style="'background-image: url(../other/admin.jpg);'">
 <div class="topnav">
@@ -174,5 +155,56 @@
     </tr>
     </table>
 </form>
+<div style="text-align: center">
+    <form method="post" action="/admin/setBackground">
+<!--        <input type="checkbox" name="background" checked>-->
+        <input type="radio" id="contactChoice1"
+               name="background" value="true"> <label for="contactChoice1">Серый</label>
+        <input type="radio" id="contactChoice2"
+               name="background" value=""> <label for="contactChoice2">Желтый</label>
+        <input type="submit">
+    </form>
+</div>
+
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", ()=>{
+        let back = Boolean([[${background}]]);
+        console.log(back);
+        if (back){
+
+            document.getElementsByName("background")[0].checked=true;
+            document.getElementsByClassName("Spreed")[0].style.backgroundColor= "rgba(241, 235, 235, 0.7)";
+            // "rgba(241, 235, 235, 0.7)";
+        }
+        else
+        {
+            document.getElementsByName("background")[1].checked=true;
+            console.log(document.getElementsByName("background")[0]);
+            console.log(document.getElementsByClassName("Spreed")[0].style.backgroundColor);
+            document.getElementsByClassName("Spreed")[0].style.backgroundColor= "rgba(255,209,40,0.7)";
+            // "rgba(255,209,40,0.7)";
+        }
+        function myFunction() {
+            input = document.getElementById("FIND");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("search");
+            tr = table.getElementsByTagName("tr");
+
+            for (i = 1; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("th")[1];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    });
+
+</script>
 </body>
 </html>
