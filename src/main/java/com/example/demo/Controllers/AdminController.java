@@ -192,4 +192,37 @@ public class AdminController {
         entityManagerFactory.close();
     }
 
+
+
+
+
+    @GetMapping("/workWithPDF")
+    public String workWithPDF(){
+        return "workWithPDF";
+    }
+
+    @PostMapping("/addPDF")
+    public String addPDF(@RequestParam(name = "pdfFile") MultipartFile file,
+                             Model model, HttpServletRequest request){
+
+        String uuid = UUID.randomUUID().toString();
+        String fileName = uuid + file.getOriginalFilename();
+        String wayOfFile = System.getProperty("user.dir").replace('\\','/') + "static/images/" + fileName;
+
+
+
+        try {
+            System.out.println(file.getSize());
+//            String path =  System.getProperty("user.dir").replace('\\','/') + "static/images/";
+            String path =  System.getProperty("user.dir").replace('\\','/') + "/src/main/resources/static/images/";
+            System.out.println(path);
+            file.transferTo(new File(path + fileName));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "workWithPDF";
+    }
+
+
 }
