@@ -77,7 +77,7 @@
             opacity: 0.8;
         }
     </style>
-<!--куда скрипт дели... Блин возможно скрипт не получает данных, так как он загружается раньше, ключевых слов нет-->
+    <!--куда скрипт дели... Блин возможно скрипт не получает данных, так как он загружается раньше, ключевых слов нет-->
 
 </head>
 <!--<script>-->
@@ -113,20 +113,13 @@
 
     <input type="submit" form="first" value="Получить">
 
-    <table>
-        <form id="second" th:each="file: ${files}" target="_blank" method="get" action="/admin/checkFile">
-            <tr>
-                <th>
-                    [[${file}]]
-                </th>
-                <th>
-                    <button type="submit" form="second">Перейти к файлу</button>
-                    <input type="hidden" name="file" th:value="${file}">
-                </th>
-            </tr>
+    <br>
+    <form id="second" th:each="file: ${files}" target="_blank" method="get" action="/admin/checkFile">
 
-        </form>
-    </table>
+        <input type="submit" form="second" name="file" th:value="${file}">
+        <br>
+
+    </form>
 
 </form>
 </body>

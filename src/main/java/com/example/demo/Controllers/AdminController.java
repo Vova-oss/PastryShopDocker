@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import redis.clients.jedis.Jedis;
 
 import javax.annotation.PreDestroy;
 import javax.persistence.EntityManager;
@@ -23,6 +24,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -206,7 +209,7 @@ public class AdminController {
 
     @PostMapping("/addPDF")
     public String addPDF(@RequestParam(name = "pdfFile") MultipartFile file,
-                         @RequestParam(name = "type") String type){
+                         @RequestParam(name = "type") String type) throws IOException {
 
         if(type.equals("archive")) {
             String uuid = UUID.randomUUID().toString();
@@ -228,17 +231,34 @@ public class AdminController {
         }
 
         if(type.equals("redis")){
+            byte[] bytes = file.getBytes();
+            Jedis jedis = new Jedis("redis");
+            String amount = jedis.get("amount");
+            if(amount == null){
+                jedis.set("amount", "1");
+                amount = "1";
+            }
+            else{
+                amount = String.valueOf(Integer.valueOf(amount) + 1);
+                jedis.set("amount", amount);
+            }
+            String key = "pdf"+amount;
+            byte[] keyB = key.getBytes();
+            jedis.set(keyB, bytes);
+            jedis.close();
 
+            return "workWithPDF";
         }
         return null;
     }
 
     @GetMapping("/getPDF")
-    public String getPDF(@RequestParam("type") String type, Model model){
+    public String getPDF(@RequestParam("type") String type, Model model) throws IOException {
         if(type.equals("archive")) {
             String uuid = UUID.randomUUID().toString();
 //            String fileName = uuid + file.getOriginalFilename();
 //            String wayOfFile = System.getProperty("user.dir").replace('\\', '/') + "static/files/" + fileName;
+
 
 
             List<File> list = new LinkedList<>();
@@ -253,6 +273,37 @@ public class AdminController {
         }
 
         if(type.equals("redis")){
+            Jedis jedis = new Jedis("redis");
+            String amount = jedis.get("amount");
+            System.out.println(amount);
+            if(amount != null) {
+                List<File> list = new LinkedList<>();
+
+                System.out.println(Integer.valueOf(amount)+1);
+                System.out.println(Integer.parseInt(amount)+1);
+
+                for(int i = 1; i < Integer.valueOf(amount)+1; i++){
+                    String key = "pdf"+i;
+                    byte[] keyB = key.getBytes();
+                    byte[] bytes = jedis.get(keyB);
+                    File file = new File(System.getProperty("user.dir").replace('\\', '/') + "static/deleteME/" + key + ".pdf");
+
+                    try (FileOutputStream fos = new FileOutputStream(file)) {
+                        fos.write(bytes);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    list.add(file);
+                }
+
+                jedis.close();
+
+                model.addAttribute("files", list);
+                return "workWithPDF";
+
+
+            }
+            return "workWithPDF";
 
         }
         return null;
@@ -260,14 +311,19 @@ public class AdminController {
 
 
     @GetMapping("/checkFile")
-    public ResponseEntity<ByteArrayResource> checkFile(@RequestParam("file") String file, Model model) throws IOException {
-
+    public ResponseEntity<ByteArrayResource> checkFile(
+            @RequestParam("file") String file,
+            Model model) throws IOException {
+        System.out.println("=-----------------------------------");
+        System.out.println(file);
         byte[] bytes = Files.readAllBytes(Path.of(file));
+        System.out.println(bytes);
         final ByteArrayResource byteArrayResource = new ByteArrayResource(bytes);
-
+        System.out.println(byteArrayResource);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/pdf"))
                 .body(byteArrayResource);
+
     }
 
 }
