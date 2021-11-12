@@ -80,19 +80,54 @@
 <!--куда скрипт дели... Блин возможно скрипт не получает данных, так как он загружается раньше, ключевых слов нет-->
 
 </head>
+<!--<script>-->
+<!--    function f() {-->
+<!--        console.log("dklf");-->
+<!--        console.log([[${files}]]);-->
+<!--    }-->
+<!--</script>-->
 <body th:style="'background-image: url(../other/admin.jpg);'">
 
 
-<h2 style="text-align: center">Добавление новой продукции</h2>
+<h2 style="text-align: center">Добавление нового файла pdf</h2>
 
 <form method="post" enctype="multipart/form-data" action="/admin/addPDF">
 
     <input class="inp" type="file" name="pdfFile">
-    <input type="submit" value="Добавить PDF">
+
+    <input type="radio" id="filetoredis"
+           name="type" value="redis" checked="true"> <label for="filetoredis">Добавить в REDIS</label>
+    <input type="radio" id="filetoarchive"
+           name="type" value="archive"> <label for="filetoarchive">Добавить в архив</label>
+    <input type="submit" value="Добавить">
 </form>
+<br>
+<br>
+<form id="first" method="get" enctype="multipart/form-data" action="/admin/getPDF">
 
 
+    <input type="radio"
+           name="type" value="redis" checked="true"> <label for="filetoredis">Получить из REDIS</label>
+    <input type="radio"
+           name="type" value="archive" > <label for="filetoarchive">Получить из архива</label>
 
+    <input type="submit" form="first" value="Получить">
 
+    <table>
+        <form id="second" th:each="file: ${files}" target="_blank" method="get" action="/admin/checkFile">
+            <tr>
+                <th>
+                    [[${file}]]
+                </th>
+                <th>
+                    <button type="submit" form="second">Перейти к файлу</button>
+                    <input type="hidden" name="file" th:value="${file}">
+                </th>
+            </tr>
+
+        </form>
+    </table>
+
+</form>
 </body>
 </html>

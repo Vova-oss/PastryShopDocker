@@ -2,7 +2,6 @@ package com.example.demo.Controllers;
 
 import com.example.demo.Email.EmailService;
 import com.example.demo.Entity.Basket;
-import com.example.demo.Entity.Product;
 import com.example.demo.Entity.User;
 import com.example.demo.Services.BasketService;
 import com.example.demo.Services.ProductService;
@@ -10,6 +9,9 @@ import com.example.demo.Services.UserService;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +24,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 
 @Controller
 @RequestMapping("/admin")
@@ -203,26 +206,68 @@ public class AdminController {
 
     @PostMapping("/addPDF")
     public String addPDF(@RequestParam(name = "pdfFile") MultipartFile file,
-                             Model model, HttpServletRequest request){
+                         @RequestParam(name = "type") String type){
 
-        String uuid = UUID.randomUUID().toString();
-        String fileName = uuid + file.getOriginalFilename();
-        String wayOfFile = System.getProperty("user.dir").replace('\\','/') + "static/images/" + fileName;
+        if(type.equals("archive")) {
+            String uuid = UUID.randomUUID().toString();
+            String fileName = uuid + file.getOriginalFilename();
+            String wayOfFile = System.getProperty("user.dir").replace('\\', '/') + "static/files/" + fileName;
 
 
-
-        try {
-            System.out.println(file.getSize());
+            try {
+                System.out.println(file.getSize());
 //            String path =  System.getProperty("user.dir").replace('\\','/') + "static/images/";
-            String path =  System.getProperty("user.dir").replace('\\','/') + "/src/main/resources/static/images/";
-            System.out.println(path);
-            file.transferTo(new File(path + fileName));
-        } catch (IOException e) {
-            e.printStackTrace();
+                String path = System.getProperty("user.dir").replace('\\', '/') + "/src/main/resources/static/files/";
+                System.out.println(path);
+                file.transferTo(new File(path + fileName));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return "workWithPDF";
         }
 
-        return "workWithPDF";
+        if(type.equals("redis")){
+
+        }
+        return null;
     }
 
+    @GetMapping("/getPDF")
+    public String getPDF(@RequestParam("type") String type, Model model){
+        if(type.equals("archive")) {
+            String uuid = UUID.randomUUID().toString();
+//            String fileName = uuid + file.getOriginalFilename();
+//            String wayOfFile = System.getProperty("user.dir").replace('\\', '/') + "static/files/" + fileName;
+
+
+            List<File> list = new LinkedList<>();
+            File dir = new File(System.getProperty("user.dir").replace('\\', '/') + "/src/main/resources/static/files/");
+            if(dir.isDirectory()){
+                Collections.addAll(list, Objects.requireNonNull(dir.listFiles()));
+            }
+            model.addAttribute("files", list);
+
+
+            return "workWithPDF";
+        }
+
+        if(type.equals("redis")){
+
+        }
+        return null;
+    }
+
+
+    @GetMapping("/checkFile")
+    public ResponseEntity<ByteArrayResource> checkFile(@RequestParam("file") String file, Model model) throws IOException {
+
+        byte[] bytes = Files.readAllBytes(Path.of(file));
+        final ByteArrayResource byteArrayResource = new ByteArrayResource(bytes);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("application/pdf"))
+                .body(byteArrayResource);
+    }
 
 }
