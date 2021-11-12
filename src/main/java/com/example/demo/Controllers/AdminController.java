@@ -216,8 +216,8 @@ public class AdminController {
 
             try {
                 System.out.println(file.getSize());
-//            String path =  System.getProperty("user.dir").replace('\\','/') + "static/images/";
-                String path = System.getProperty("user.dir").replace('\\', '/') + "/src/main/resources/static/files/";
+            String path =  System.getProperty("user.dir").replace('\\','/') + "static/files/";
+//                String path = System.getProperty("user.dir").replace('\\', '/') + "/src/main/resources/static/files/";
                 System.out.println(path);
                 file.transferTo(new File(path + fileName));
             } catch (IOException e) {
@@ -242,7 +242,7 @@ public class AdminController {
 
 
             List<File> list = new LinkedList<>();
-            File dir = new File(System.getProperty("user.dir").replace('\\', '/') + "/src/main/resources/static/files/");
+            File dir = new File(System.getProperty("user.dir").replace('\\', '/') + "static/files/");
             if(dir.isDirectory()){
                 Collections.addAll(list, Objects.requireNonNull(dir.listFiles()));
             }
