@@ -60,10 +60,7 @@ public class AdminController {
                 }
             }
 
-//        model.addAttribute("background", true);
         model.addAttribute("Products",productService.findAllSorted());
-
-
 
         return "pageForAdmin";
     }
@@ -219,7 +216,7 @@ public class AdminController {
 
             try {
                 System.out.println(file.getSize());
-            String path =  System.getProperty("user.dir").replace('\\','/') + "static/files/";
+                String path =  System.getProperty("user.dir").replace('\\','/') + "static/files/";
 //                String path = System.getProperty("user.dir").replace('\\', '/') + "/src/main/resources/static/files/";
                 System.out.println(path);
                 file.transferTo(new File(path + fileName));

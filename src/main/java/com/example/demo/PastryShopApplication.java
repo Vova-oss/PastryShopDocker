@@ -1,4 +1,4 @@
-package com.example.demo;
+ package com.example.demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,7 +17,7 @@ public class PastryShopApplication {
 
     @Bean
     public RedisConnectionFactory factory(){
-        return new LettuceConnectionFactory("redis", 6379);
+        return new LettuceConnectionFactory("localhost", 6379);
     }
 
 }

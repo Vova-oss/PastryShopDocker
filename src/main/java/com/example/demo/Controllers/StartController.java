@@ -159,5 +159,9 @@ public class StartController {
     }
 
 
+    @GetMapping("/fix")
+    public String fix(){
+        return "fix";
+    }
 
 }
