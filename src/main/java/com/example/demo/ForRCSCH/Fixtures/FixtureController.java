@@ -5,7 +5,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
-import nonapi.io.github.classgraph.utils.FileUtils;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -14,21 +13,13 @@ import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.chart.plot.PlotOrientation;
 
 
-import org.opencv.core.*;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Stream;
 
 @Controller
 @RequestMapping("/fix")
@@ -37,7 +28,7 @@ public class FixtureController {
     String dirPath = System.getProperty("user.dir").replace('\\', '/') + "/src/main/resources/static/";
 //    String dirPath = System.getProperty("user.dir").replace('\\', '/') + "static/";
 
-    public List<FixturePerson> list;
+    private List<FixturePerson> list;
 
     @GetMapping("/createGraph")
     public void createGraph(){
@@ -53,15 +44,16 @@ public class FixtureController {
                 true,
                 true,
                 false);
-        int width =3840/2/2;
-        int height = 2160/2/2;
+        int width =3840/1;
+        int height = 2160/1;
+        System.out.println();
+
 
         // Сохранение картинки графика
         File pieFile = new File(dirPath+"fixtures/pieChart.jpg");
 
         //ГРАФИК ЛИНЕЙНЫЙ
         DefaultCategoryDataset lineChart = new DefaultCategoryDataset();
-        Stream stream = list.stream();
         list.forEach(fixturePerson -> lineChart.addValue(fixturePerson.getAge(), "age", fixturePerson.getName()+" "+fixturePerson.getSurname()));
 
         JFreeChart lineObject = ChartFactory.createLineChart(
@@ -95,8 +87,12 @@ public class FixtureController {
         File barFile = new File(dirPath + "fixtures/histogram.jpg");
 
         try {
-            ChartUtilities.saveChartAsJPEG(pieFile, pieObject, width, height);
             ChartUtilities.saveChartAsJPEG(lineFile, lineObject, width, height);
+
+            width =3840/4;
+            height = 2160/4;
+
+            ChartUtilities.saveChartAsJPEG(pieFile, pieObject, width, height);
             ChartUtilities.saveChartAsJPEG(barFile, barObject, width, height);
         } catch (IOException e) {
             e.printStackTrace();
@@ -124,7 +120,7 @@ public class FixtureController {
                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
                 g2d.setFont(new Font("Arial", Font.BOLD, 30));
-                String copyright = "Vadim I Vova (C) 2021";
+                String copyright = "Vadim I Vova I Tёmochka(C) 2021";
 
                 FontMetrics fontMetrics = g2d.getFontMetrics();
                 Rectangle2D rect = fontMetrics.getStringBounds(copyright, g2d);
@@ -144,4 +140,7 @@ public class FixtureController {
         }
     }
 
+    public void setList(List<FixturePerson> list) {
+        this.list = list;
+    }
 }

@@ -48,7 +48,7 @@ public class FixtureTests{
     public void mainTest(){
         FixtureController fixtureController = new FixtureController();
         System.out.println(list.size());
-        fixtureController.list = this.list;
+        fixtureController.setList(list);
         fixtureController.createGraph();
     }
 
